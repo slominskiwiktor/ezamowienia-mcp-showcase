@@ -38,7 +38,11 @@ rejestr decyzji — fundament pod w pełni autonomicznego agenta przetargowego.
   przeoczyć trafnych postępowań.
 - **Współdzielony rejestr statusów** — przetarg odrzucony lub zakończony w
   jednej sesji nigdy nie wraca w kolejnej; statusy prowadzą deal przez cały
-  cykl (`nowy → w toku → zakończony / odrzucony`).
+  cykl (`nowy → w toku → złożony → zakończony / odrzucony`).
+- **Pilnowanie wyników złożonych ofert** — rejestry nie zapowiadają daty
+  rozstrzygnięcia, więc system sam wykrywa moment publikacji wyniku i
+  raportuje zwycięzcę oraz rozstrzygnięcie (dopasowanie po identyfikatorze
+  postępowania — dokładne, nie po tytule).
 - **Pełna treść i dokumenty** — dostęp do całej treści ogłoszenia i linków do
   dokumentów postępowania (SWZ, załączniki).
 - **Filtr pilności** — skrót do postępowań z terminem składania w najbliższych
@@ -54,7 +58,7 @@ rejestr decyzji — fundament pod w pełni autonomicznego agenta przetargowego.
 | Protokół | Oficjalne SDK Model Context Protocol |
 | Transporty | stdio (lokalnie) + Streamable HTTP (zdalnie, uwierzytelniany) |
 | Walidacja | Zod — schematy wejścia dla każdego narzędzia |
-| Jakość | 83 testy jednostkowe/integracyjne, CI na Node 20 i 22 |
+| Jakość | 99 testów jednostkowych/integracyjnych, CI na Node 20 i 22 |
 | Bezpieczeństwo | bramka regulaminu API, uwierzytelnianie stałoczasowe, sanityzacja zapytań, twarde limity zakresu |
 
 ## Zgodność i etyka integracji
