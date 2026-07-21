@@ -13,17 +13,18 @@
 ## 🔒 Kod źródłowy prywatny
 
 To repozytorium jest **wizytówką projektu**. Implementacja jest własnością
-**App4You** i **nie jest publicznie dostępna**. Prezentacja na żywo oraz wgląd
-w kod — na życzenie, po ustaleniu warunków (NDA).
+**App4You** i **nie jest publicznie dostępna**. Dostęp komercyjny, wdrożenie,
+prezentacja na żywo oraz wgląd w kod są dostępne po ustaleniu warunków (NDA).
 
-**Kontakt:** [biuro@app4you.dev](mailto:biuro@app4you.dev) · [app4you.dev](https://app4you.dev)
+**Chcesz kupić dostęp lub zamówić wdrożenie?** Napisz na
+[biuro@app4you.dev](mailto:biuro@app4you.dev) · [app4you.dev](https://app4you.dev)
 
 ---
 
 ## Co to jest
 
 `ezamowienia-mcp` to serwer **Model Context Protocol**, który daje asystentowi
-AI (np. Claude) samodzielny dostęp do polskiego i unijnego rynku zamówień
+AI (np. Claude lub Codex) samodzielny dostęp do polskiego i unijnego rynku zamówień
 publicznych. Zamiast ręcznie przeglądać portale, asystent codziennie pobiera
 nowe ogłoszenia, ocenia ich dopasowanie do Twojej oferty i prowadzi trwały
 rejestr decyzji — fundament pod w pełni autonomicznego agenta przetargowego.
@@ -38,17 +39,29 @@ rejestr decyzji — fundament pod w pełni autonomicznego agenta przetargowego.
   przeoczyć trafnych postępowań.
 - **Współdzielony rejestr statusów** — przetarg odrzucony lub zakończony w
   jednej sesji nigdy nie wraca w kolejnej; statusy prowadzą deal przez cały
-  cykl (`nowy → w toku → złożony → zakończony / odrzucony`).
+  cykl (`nowy → w toku → złożony → wezwanie → zarchiwizowany`, a przegrany,
+  anulowany lub przedawniony trafia do `zakończonych`).
 - **Pilnowanie wyników złożonych ofert** — rejestry nie zapowiadają daty
   rozstrzygnięcia, więc system sam wykrywa moment publikacji wyniku i
   raportuje zwycięzcę oraz rozstrzygnięcie (dopasowanie po identyfikatorze
   postępowania — dokładne, nie po tytule).
-- **Pełna treść i dokumenty** — dostęp do całej treści ogłoszenia i linków do
-  dokumentów postępowania (SWZ, załączniki).
+- **Monitoring zmian** — przed wyszukiwaniem nowych szans odświeża aktywne
+  postępowania, porównuje terminy, wymagania i załączniki oraz nadaje zmianom
+  priorytet `KRYTYCZNA`, `WAŻNA` albo `INFO`.
+- **Pełna treść i dokumenty** — pobiera, zapisuje i analizuje publiczne
+  załączniki z platform e-Zamówienia, OpenNexus/platformazakupowa.pl, ZETO oraz
+  Marketplanet/eZamawiający. Obsługuje PDF, DOC, DOCX, RTF, ZIP i pliki tekstowe.
+- **Podsumowania i różnice dokumentów** — zwraca krótkie podsumowanie oraz diff
+  względem poprzedniej wersji; jawnie oznacza metadane jako świeże lub
+  nieaktualne, jeśli platforma chwilowo nie odpowiada.
+- **Obsługa wezwania** — przechowuje termin wezwania, URL platformy,
+  identyfikator postępowania i liczbę dni do najbliższego operacyjnego terminu.
 - **Filtr pilności** — skrót do postępowań z terminem składania w najbliższych
   dniach, gotowy pod rutynę harmonogramu.
-- **Gotowy pod automatyzację** — działa jako konektor w Claude Code; jedna
-  zaplanowana rutyna potrafi pobierać, oceniać i oznaczać deale bez nadzoru.
+- **Gotowy pod automatyzację** — działa jako lokalny konektor w Claude Desktop,
+  Claude Code i Codex Desktop oraz jako uwierzytelniany serwer zdalny. Rutyna
+  może monitorować i przygotowywać materiały do decyzji właściciela; narzędzie
+  nie składa ofert, nie podpisuje dokumentów i niczego nie wysyła.
 
 ## Pod maską
 
@@ -58,15 +71,17 @@ rejestr decyzji — fundament pod w pełni autonomicznego agenta przetargowego.
 | Protokół | Oficjalne SDK Model Context Protocol |
 | Transporty | stdio (lokalnie) + Streamable HTTP (zdalnie, uwierzytelniany) |
 | Walidacja | Zod — schematy wejścia dla każdego narzędzia |
-| Jakość | 99 testów jednostkowych/integracyjnych, CI na Node 20 i 22 |
-| Bezpieczeństwo | bramka regulaminu API, uwierzytelnianie stałoczasowe, sanityzacja zapytań, twarde limity zakresu |
+| Jakość | 140 testów jednostkowych/integracyjnych, CI na Node 20, 22, 24 i 26 |
+| Platformy dokumentów | e-Zamówienia, OpenNexus, ZETO, Marketplanet/eZamawiający |
+| Bezpieczeństwo | bramka regulaminu API, ścisłe listy hostów i ścieżek, uwierzytelnianie stałoczasowe, sanityzacja zapytań, limity pobrań i archiwów |
 
 ## Zgodność i etyka integracji
 
-Narzędzie korzysta **wyłącznie z oficjalnego, publicznego API odczytu** BZP
-(bezpłatnego zgodnie z regulaminem UZP) oraz z oficjalnego API TED. Świadomie
-**nie sięga** po nieudokumentowane, wewnętrzne interfejsy portalu — klient jest
-„grzeczny": limituje tempo zapytań i respektuje warunki korzystania.
+Narzędzie korzysta z oficjalnych publicznych API odczytu BZP i TED oraz z
+publicznych, nieuwierzytelnionych powierzchni odczytu platform wykonawczych do
+listowania i pobierania dokumentów. Każdy adapter ma ścisłą listę dozwolonych
+hostów i ścieżek; klient limituje tempo i rozmiar zapytań, nie omija kontroli
+dostępu i respektuje warunki korzystania.
 
 ---
 
@@ -75,7 +90,8 @@ Narzędzie korzysta **wyłącznie z oficjalnego, publicznego API odczytu** BZP
 **App4You** — oprogramowanie na zamówienie: aplikacje mobilne, systemy webowe i
 rozwiązania AI dla sektora publicznego i biznesu.
 
-📧 [biuro@app4you.dev](mailto:biuro@app4you.dev) · 🌐 [app4you.dev](https://app4you.dev)
+Zakup dostępu, licencja, integracja lub prezentacja:
+[biuro@app4you.dev](mailto:biuro@app4you.dev) · [app4you.dev](https://app4you.dev)
 
 ---
 
